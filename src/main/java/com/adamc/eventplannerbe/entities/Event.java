@@ -17,22 +17,31 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 50)
     private String title;
+
+    @Column(length = 25)
     private String creator;
+
+    @Column
     private Integer maxParticipants;
+
+    @Column
     private Date startDate;
+
+    @Column
     private Date endDate;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "event_id")
     private List<User> invitees = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "event_id")
     private List<User> participants = new ArrayList<>();
 
     @Getter
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "event_id")
     private List<User> blackList = new ArrayList<>();
 
