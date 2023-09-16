@@ -13,21 +13,18 @@ import java.util.TreeSet;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Project {
+public class Board {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(length = 50)
+    @Column(length = 25)
     private String name;
 
-    @Column(length = 255)
-    private String details;
-
     @OneToMany
-    private List<Board> boards;
+    private List<Task> tasks;
 
-    public void setBoards(List<Board> boards) {
-        this.boards = boards;
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 }

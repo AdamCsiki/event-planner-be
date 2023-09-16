@@ -15,8 +15,11 @@ public class Task {
     private Long id;
 
     @Column(length = 50)
-    private String title;
+    private String name;
 
     @Column(length = 255)
-    private String description;
+    private String details;
+
+    @Column
+    private Boolean taken;
 }
