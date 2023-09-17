@@ -7,6 +7,7 @@ import com.adamc.eventplannerbe.requests.*;
 import com.adamc.eventplannerbe.service.BoardService;
 import com.adamc.eventplannerbe.service.ProjectService;
 import com.adamc.eventplannerbe.service.TaskService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -16,16 +17,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("projects")
+@RequiredArgsConstructor
 public class ProjectController {
     private final ProjectService projectService;
     private final BoardService boardService;
     private final TaskService taskService;
-
-    public ProjectController(ProjectService projectService, BoardService boardService, TaskService taskService) {
-        this.projectService = projectService;
-        this.boardService = boardService;
-        this.taskService = taskService;
-    }
 
     /**
      * GET REQUESTS

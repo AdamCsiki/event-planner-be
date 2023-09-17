@@ -2,15 +2,13 @@ package com.adamc.eventplannerbe.service;
 
 import com.adamc.eventplannerbe.entities.Task;
 import com.adamc.eventplannerbe.repos.TaskRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class TaskService {
     private final TaskRepository taskRepository;
-
-    public TaskService(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
 
     /**
      *  GET REQUESTS

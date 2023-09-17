@@ -4,6 +4,7 @@ import com.adamc.eventplannerbe.entities.Board;
 import com.adamc.eventplannerbe.entities.Project;
 import com.adamc.eventplannerbe.entities.Task;
 import com.adamc.eventplannerbe.repos.ProjectRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,14 +14,10 @@ import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final BoardService boardService;
-
-    public ProjectService(ProjectRepository projectRepository, BoardService boardService) {
-        this.projectRepository = projectRepository;
-        this.boardService = boardService;
-    }
 
     /**
      * GET REQUESTS

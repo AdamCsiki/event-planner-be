@@ -3,15 +3,14 @@ package com.adamc.eventplannerbe.service;
 import com.adamc.eventplannerbe.entities.Board;
 import com.adamc.eventplannerbe.entities.Task;
 import com.adamc.eventplannerbe.repos.BoardRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
 
-    public BoardService(BoardRepository boardRepository) {
-        this.boardRepository = boardRepository;
-    }
 
     /**
      * GET REQUESTS
