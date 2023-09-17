@@ -22,4 +22,10 @@ public class Task {
 
     @Column
     private Boolean taken;
+
+    public Task(String name, String details) {
+        this.name = name;
+        this.details = details;
+        this.taken = false;
+    }
 }

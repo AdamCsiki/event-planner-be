@@ -24,10 +24,14 @@ public class Project {
     @Column(length = 255)
     private String details;
 
-    @OneToMany
-    private List<Board> boards;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Board> boards = new ArrayList<>();
 
     public void setBoards(List<Board> boards) {
         this.boards = boards;
+    }
+
+    public void addBoard(Board board) {
+        this.boards.add(board);
     }
 }

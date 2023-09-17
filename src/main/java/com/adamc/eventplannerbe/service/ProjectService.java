@@ -1,19 +1,30 @@
 package com.adamc.eventplannerbe.service;
 
+import com.adamc.eventplannerbe.entities.Board;
 import com.adamc.eventplannerbe.entities.Project;
+import com.adamc.eventplannerbe.entities.Task;
 import com.adamc.eventplannerbe.repos.ProjectRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 @Service
 public class ProjectService {
     private final ProjectRepository projectRepository;
+    private final BoardService boardService;
 
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectService(ProjectRepository projectRepository, BoardService boardService) {
         this.projectRepository = projectRepository;
+        this.boardService = boardService;
     }
 
+    /**
+     * GET REQUESTS
+     */
     public ArrayList<Project> getAllByName(String name) {
         ArrayList<Project> projects = new ArrayList<>();
 
@@ -22,6 +33,48 @@ public class ProjectService {
         return projects;
     }
 
+    public ArrayList<Project> getAll() {
+        ArrayList<Project> projects = new ArrayList<>();
+
+        projects.addAll(projectRepository.findAll());
+
+        return projects;
+    }
+
+    public Project getOneById(Long id) {
+        return projectRepository.findOneById(id);
+    }
+
+    /**
+     * PUT REQUESTS
+     */
+    public Project addNewBoard(Project project, String name) {
+        Board newBoard = new Board(name);
+
+        project.addBoard(newBoard);
+
+        return project;
+    }
+
+    public Board addNewTask(Long boardId, String name, String details) {
+        Board board = boardService.getOneById(boardId);
+
+        Task task = new Task(name, details);
+
+        board.addTask(task);
+
+        return board;
+    }
+
+    public Project putProject(Project project) {
+        projectRepository.save(project);
+
+        return projectRepository.findOneById(project.getId());
+    }
+
+    /**
+     * POST REQUESTS
+     */
     public boolean postProject(Project Project) {
         try {
             Project check = projectRepository.save(Project);
@@ -30,5 +83,11 @@ public class ProjectService {
             System.out.printf(e.getMessage());
             return false;
         }
+    }
+
+    public Project editProject(Project project, String projectName) {
+        project.setName(projectName);
+
+        return project;
     }
 }
