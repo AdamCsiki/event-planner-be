@@ -1,4 +1,4 @@
-package com.adamc.eventplannerbe.auth;
+package com.adamc.eventplannerbe.responses;
 
 import com.adamc.eventplannerbe.entities.User;
 import lombok.AllArgsConstructor;
@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthenticationResponse {
     private String token;
+    private String refreshToken;
+
     private Long id;
     private String name;
     private String email;
