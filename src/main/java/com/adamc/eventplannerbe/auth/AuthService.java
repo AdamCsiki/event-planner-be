@@ -5,7 +5,10 @@ import com.adamc.eventplannerbe.repos.UserRepository;
 import com.adamc.eventplannerbe.responses.AuthenticationResponse;
 import com.adamc.eventplannerbe.responses.RefreshResponse;
 import com.adamc.eventplannerbe.service.JwtService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,27 +25,37 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
 
-    public AuthenticationResponse register(RegisterRequest registerRequest) {
+    public void addRefreshToCookies(String refresh, HttpServletResponse response) {
+        ResponseCookie refreshCookie = ResponseCookie
+                .from("refresh", refresh)
+                .httpOnly(true)
+                .secure(true)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+    }
+
+    public AuthenticationResponse register(RegisterRequest registerRequest, HttpServletResponse response) {
         User user = User.builder()
                 .name(registerRequest.getName())
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
+
         userRepository.save(user);
 
-        String jwtToken = jwtService.generateToken(user);
-        String jwtRefreshToken = jwtService.generateRefreshToken(user);
+        String token = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        addRefreshToCookies(refreshToken, response);
 
         return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .refreshToken(jwtRefreshToken)
                 .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
+                .token(token)
                 .build();
     }
 
-    public AuthenticationResponse login(LoginRequest loginRequest) {
+    public AuthenticationResponse login(LoginRequest loginRequest, HttpServletResponse response) {
         authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
                   loginRequest.getEmail(),
@@ -52,19 +65,18 @@ public class AuthService {
 
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
 
-        String jwtToken = jwtService.generateToken(user);
-        String jwtRefreshToken = jwtService.generateRefreshToken(user);
+        String token = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        addRefreshToCookies(refreshToken, response);
 
         return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .refreshToken(jwtRefreshToken)
                 .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
+                .token(token)
                 .build();
     }
 
-    public RefreshResponse refresh(String oldRefreshToken) {
+    public RefreshResponse refresh(String oldRefreshToken, HttpServletResponse response) {
         String username = jwtService.extractRefreshUsername(oldRefreshToken);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -72,10 +84,11 @@ public class AuthService {
         String token = jwtService.generateToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
 
+        addRefreshToCookies(refreshToken, response);
+
         return RefreshResponse
                 .builder()
                 .token(token)
-                .refresh(refreshToken)
                 .build();
     }
 }
