@@ -5,6 +5,7 @@ import com.adamc.eventplannerbe.repos.UserRepository;
 import com.adamc.eventplannerbe.responses.AuthenticationResponse;
 import com.adamc.eventplannerbe.responses.RefreshResponse;
 import com.adamc.eventplannerbe.service.JwtService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -26,13 +27,13 @@ public class AuthService {
     private final UserDetailsService userDetailsService;
 
     public void addRefreshToCookies(String refresh, HttpServletResponse response) {
-        ResponseCookie refreshCookie = ResponseCookie
-                .from("refresh", refresh)
-                .httpOnly(true)
-                .secure(true)
-                .build();
+        Cookie refreshCookie = new Cookie("refresh", refresh);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(true);
+        refreshCookie.setPath("http://127.0.0.1:5173");
 
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        response.addCookie(refreshCookie);
+
     }
 
     public AuthenticationResponse register(RegisterRequest registerRequest, HttpServletResponse response) {
@@ -52,6 +53,7 @@ public class AuthService {
         return AuthenticationResponse.builder()
                 .id(user.getId())
                 .token(token)
+                .refresh(refreshToken)
                 .build();
     }
 
@@ -73,6 +75,7 @@ public class AuthService {
         return AuthenticationResponse.builder()
                 .id(user.getId())
                 .token(token)
+                .refresh(refreshToken)
                 .build();
     }
 
@@ -89,6 +92,7 @@ public class AuthService {
         return RefreshResponse
                 .builder()
                 .token(token)
+                .refresh(refreshToken)
                 .build();
     }
 }

@@ -2,13 +2,15 @@ package com.adamc.eventplannerbe.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.TreeSet;
 
 @Entity
 @Data
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,6 +25,10 @@ public class Project {
 
     @Column(length = 255)
     private String details;
+
+    @DateTimeFormat(pattern = "MM-dd-YYYY")
+    @Column
+    private Date deadLine;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Board> boards = new ArrayList<>();

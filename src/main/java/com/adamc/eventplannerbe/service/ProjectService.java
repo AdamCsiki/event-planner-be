@@ -30,7 +30,7 @@ public class ProjectService {
         return projects;
     }
 
-    public ArrayList<Project> getAll() {
+    public ArrayList<Project> getAllByUser() {
         ArrayList<Project> projects = new ArrayList<>();
 
         projects.addAll(projectRepository.findAll());

@@ -76,27 +76,7 @@
 
     <!--GENERAL-->
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    <!--EXE-->
-
 <!--    <build>-->
-<!--        <finalName>ws-springboot-project-planner</finalName>-->
 <!--        <plugins>-->
 <!--            <plugin>-->
 <!--                <groupId>org.springframework.boot</groupId>-->
@@ -108,12 +88,32 @@
 <!--                            <artifactId>lombok</artifactId>-->
 <!--                        </exclude>-->
 <!--                    </excludes>-->
-<!--                    <executable>-->
-<!--                        true-->
-<!--                    </executable>-->
 <!--                </configuration>-->
 <!--            </plugin>-->
 <!--        </plugins>-->
 <!--    </build>-->
+
+    <!--EXE-->
+
+    <build>
+        <finalName>ws-springboot-project-planner</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                    <executable>
+                        true
+                    </executable>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

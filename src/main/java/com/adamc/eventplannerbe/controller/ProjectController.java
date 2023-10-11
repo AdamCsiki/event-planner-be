@@ -3,13 +3,17 @@ package com.adamc.eventplannerbe.controller;
 import com.adamc.eventplannerbe.entities.Board;
 import com.adamc.eventplannerbe.entities.Project;
 import com.adamc.eventplannerbe.entities.Task;
+import com.adamc.eventplannerbe.entities.User;
 import com.adamc.eventplannerbe.requests.*;
 import com.adamc.eventplannerbe.service.BoardService;
 import com.adamc.eventplannerbe.service.ProjectService;
 import com.adamc.eventplannerbe.service.TaskService;
+import com.adamc.eventplannerbe.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
@@ -20,6 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProjectController {
     private final ProjectService projectService;
+    private final UserService userService;
     private final BoardService boardService;
     private final TaskService taskService;
 
@@ -27,12 +32,22 @@ public class ProjectController {
      * GET REQUESTS
      */
     @GetMapping("")
-    public ArrayList<Project> getProjectsByQuery(@RequestParam(required = false) Optional<String> query) {
-        if(query.isPresent()) {
-            return projectService.getAllByName(query.get());
+    public ResponseEntity<ArrayList<Project>> getProjects(Principal principal) {
+        Optional<User> user = userService.getUserByEmail(principal.getName());
+        ArrayList<Project> projects = new ArrayList<>();
+
+        if(user.isPresent()) {
+            projects = new ArrayList<>(user.get().getProjects());
         }
 
-        return  projectService.getAll();
+        return ResponseEntity.ok(projects);
+    }
+
+    @GetMapping("/{name}")
+    public ResponseEntity<Project> getProjectByName(@PathVariable String name, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName()).orElseThrow();
+
+        // TODO: FIX IT SO IT WORKS WITH NAME OR ID
     }
 
     /**
