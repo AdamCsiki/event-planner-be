@@ -2,14 +2,15 @@ package com.adamc.eventplannerbe.auth;
 
 import com.adamc.eventplannerbe.entities.User;
 import com.adamc.eventplannerbe.repos.UserRepository;
+import com.adamc.eventplannerbe.requests.LoginRequest;
+import com.adamc.eventplannerbe.requests.RegisterRequest;
 import com.adamc.eventplannerbe.responses.AuthenticationResponse;
 import com.adamc.eventplannerbe.responses.RefreshResponse;
 import com.adamc.eventplannerbe.service.JwtService;
+import com.adamc.eventplannerbe.validator.UserValidator;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,14 +27,17 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
 
+    private UserValidator userValidator = new UserValidator();
+
     public void addRefreshToCookies(String refresh, HttpServletResponse response) {
         Cookie refreshCookie = new Cookie("refresh", refresh);
         refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(true);
-        refreshCookie.setPath("http://127.0.0.1:5173");
+        refreshCookie.setSecure(true); // doesn't work on localhost
+        refreshCookie.setPath("/");
 
         response.addCookie(refreshCookie);
 
+        response.setHeader("Set-Cookie", "refresh=" + refresh + "; path=/; HttpOnly; SameSite=None; Secure");
     }
 
     public AuthenticationResponse register(RegisterRequest registerRequest, HttpServletResponse response) {
@@ -42,6 +46,10 @@ public class AuthService {
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
+
+        if(!userValidator.isUserValid(user)) {
+            return new AuthenticationResponse();
+        }
 
         userRepository.save(user);
 
@@ -81,6 +89,23 @@ public class AuthService {
 
     public RefreshResponse refresh(String oldRefreshToken, HttpServletResponse response) {
         String username = jwtService.extractRefreshUsername(oldRefreshToken);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        String token = jwtService.generateToken(userDetails);
+        String refreshToken = jwtService.generateRefreshToken(userDetails);
+
+        addRefreshToCookies(refreshToken, response);
+
+        return RefreshResponse
+                .builder()
+                .token(token)
+                .refresh(refreshToken)
+                .build();
+    }
+
+    public RefreshResponse refreshDebug(String oldToken, HttpServletResponse response) {
+        String username = jwtService.extractUsername(oldToken);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 

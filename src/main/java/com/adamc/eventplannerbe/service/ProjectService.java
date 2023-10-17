@@ -2,7 +2,9 @@ package com.adamc.eventplannerbe.service;
 
 import com.adamc.eventplannerbe.entities.Board;
 import com.adamc.eventplannerbe.entities.Project;
+import com.adamc.eventplannerbe.entities.ProjectPreview;
 import com.adamc.eventplannerbe.entities.Task;
+import com.adamc.eventplannerbe.mappers.ProjectPreviewMapper;
 import com.adamc.eventplannerbe.repos.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,16 @@ public class ProjectService {
         projects.addAll(projectRepository.findAll());
 
         return projects;
+    }
+
+    public ArrayList<ProjectPreview> getAllPreview() {
+        ArrayList<ProjectPreview> projectPreviews = new ArrayList<>();
+
+        projectRepository.findAllPreview().forEach((project -> {
+            projectPreviews.add(ProjectPreviewMapper.ProjectToPreview(project));
+        }));
+
+        return projectPreviews;
     }
 
     public Project getOneById(Long id) {

@@ -26,7 +26,6 @@ public class Project {
     @Column(length = 255)
     private String details;
 
-    @DateTimeFormat(pattern = "MM-dd-YYYY")
     @Column
     private Date deadLine;
 

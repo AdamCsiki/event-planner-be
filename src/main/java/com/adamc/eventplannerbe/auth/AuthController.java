@@ -1,5 +1,7 @@
 package com.adamc.eventplannerbe.auth;
 
+import com.adamc.eventplannerbe.requests.LoginRequest;
+import com.adamc.eventplannerbe.requests.RegisterRequest;
 import com.adamc.eventplannerbe.responses.AuthenticationResponse;
 import com.adamc.eventplannerbe.responses.RefreshResponse;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,7 +18,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest registerRequest, HttpServletResponse response) {
-        return ResponseEntity.ok(authService.register(registerRequest, response));
+        AuthenticationResponse authResponse = authService.register(registerRequest, response);
+
+        if(authResponse == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/login")

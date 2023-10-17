@@ -31,6 +31,8 @@ public class SecurityConfig {
                                 authorization
                                 .requestMatchers("auth/**")
                                 .permitAll()
+                                        .requestMatchers("static/**")
+                                        .permitAll()
                                 .anyRequest()
                                 .authenticated()
                 )
