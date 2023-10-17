@@ -18,7 +18,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("http://127.0.0.1:5173", "https://adamcsiki.github.io/project-planner")
+                .allowedOriginPatterns("http://127.0.0.1:5173", "https://adamcsiki.github.io")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("Authorization", "Content-Type", "Set-Cookie")
                 .exposedHeaders("Authorization", "Content-Type", "Set-Cookie")
