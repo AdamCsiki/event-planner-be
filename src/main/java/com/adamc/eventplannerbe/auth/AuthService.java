@@ -30,14 +30,14 @@ public class AuthService {
     private UserValidator userValidator = new UserValidator();
 
     public void addRefreshToCookies(String refresh, HttpServletResponse response) {
-        Cookie refreshCookie = new Cookie("refresh", refresh);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(true); // doesn't work on localhost
-        refreshCookie.setPath("/");
+//        Cookie refreshCookie = new Cookie("refresh", refresh);
+//        refreshCookie.setHttpOnly(true);
+//        refreshCookie.setSecure(true); // doesn't work on localhost
+//        refreshCookie.setPath("/");
+//
+//        response.addCookie(refreshCookie);
 
-        response.addCookie(refreshCookie);
-
-        response.setHeader("Set-Cookie", "refresh=" + refresh + "; path=/; HttpOnly; SameSite=None; Secure");
+        response.setHeader("Set-Cookie", "refresh=" + refresh + "; path=/; HttpOnly; SameSite=None; Secure;");
     }
 
     public AuthenticationResponse register(RegisterRequest registerRequest, HttpServletResponse response) {
@@ -91,6 +91,10 @@ public class AuthService {
         String username = jwtService.extractRefreshUsername(oldRefreshToken);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        if(!jwtService.isRefreshTokenValid(oldRefreshToken, userDetails)) {
+            return RefreshResponse.builder().token("").refresh("").build();
+        }
 
         String token = jwtService.generateToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);

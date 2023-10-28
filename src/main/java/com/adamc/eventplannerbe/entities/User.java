@@ -13,9 +13,9 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Builder
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
@@ -31,7 +31,7 @@ public class User implements UserDetails {
     @Column(length = 100)
     private String password;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Project> projects = new ArrayList<>();
 
     public void setProjects(List<Project> projects) {

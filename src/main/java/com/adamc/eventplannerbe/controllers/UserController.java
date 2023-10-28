@@ -10,6 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("users")
@@ -18,6 +23,9 @@ public class UserController {
     private final UserService userService;
     private final JwtService jwtService;
 
+    /**
+     * GET REQUESTS
+     */
     @GetMapping("/user/token")
     public ResponseEntity<User> getUserByToken(@CookieValue(name = "refresh") String refreshToken) {
         String email = jwtService.extractRefreshUsername(refreshToken);
@@ -29,20 +37,5 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/user/project")
-    public ResponseEntity<User> putProject(@RequestBody AddProjectRequest addProjectRequest, Principal principal) {
-        User user = userService.getUserByEmail(principal.getName()).orElseThrow();
 
-        Project newProject = Project
-                    .builder()
-                    .name(addProjectRequest.getName())
-                    .deadLine(addProjectRequest.getDeadLine())
-                    .build();
-
-        user.getProjects().add(newProject);
-
-        userService.putUser(user);
-
-        return ResponseEntity.ok(userService.getUserByEmail(principal.getName()).orElseThrow());
-    }
 }

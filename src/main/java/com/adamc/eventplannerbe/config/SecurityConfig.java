@@ -30,9 +30,9 @@ public class SecurityConfig {
                         authorization ->
                                 authorization
                                 .requestMatchers("auth/**")
-                                .permitAll()
-                                        .requestMatchers("static/**")
-                                        .permitAll()
+                                    .permitAll()
+                                .requestMatchers("static/**")
+                                    .permitAll()
                                 .anyRequest()
                                 .authenticated()
                 )

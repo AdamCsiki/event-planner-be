@@ -16,8 +16,7 @@ public class UserValidator {
         return user != null &&
                 isNameValid(user.getName()) &&
                 isEmailValid(user.getEmail()) &&
-                isPasswordValid(user.getPassword()) &&
-                isProjectsNonNull(user.getProjects());
+                isPasswordValid(user.getPassword());
     }
 
     public boolean isNameValid(String name) {
@@ -29,7 +28,7 @@ public class UserValidator {
     }
 
     public boolean isPasswordValid(String password) {
-        return password != null && !password.isEmpty() && password.matches("^[a-zA-Z0-9!@#$%^&*()]*$");
+        return password != null && !password.isEmpty();
     }
 
     public boolean isProjectsNonNull(List<Project> projects) {

@@ -1,9 +1,6 @@
 package com.adamc.eventplannerbe.service;
 
-import com.adamc.eventplannerbe.entities.Board;
-import com.adamc.eventplannerbe.entities.Project;
-import com.adamc.eventplannerbe.entities.ProjectPreview;
-import com.adamc.eventplannerbe.entities.Task;
+import com.adamc.eventplannerbe.entities.*;
 import com.adamc.eventplannerbe.mappers.ProjectPreviewMapper;
 import com.adamc.eventplannerbe.repos.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +55,7 @@ public class ProjectService {
      * PUT REQUESTS
      */
     public Project addNewBoard(Project project, String name) {
-        Board newBoard = new Board(name);
+        Board newBoard = new Board(name, "");
 
         project.addBoard(newBoard);
 
@@ -98,5 +95,12 @@ public class ProjectService {
         project.setName(projectName);
 
         return project;
+    }
+
+    /**
+     * DELETE REQUESTS
+     */
+    public void deleteById(Long id) {
+        projectRepository.deleteById(id);
     }
 }

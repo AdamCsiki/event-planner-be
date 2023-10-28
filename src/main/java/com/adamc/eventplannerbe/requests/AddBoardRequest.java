@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddBoardRequest {
-    private Long projectId;
     private String boardName;
 }

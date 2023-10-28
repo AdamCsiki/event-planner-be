@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddTaskRequest {
-    private Long projectId;
     private Long boardId;
     private String taskName;
     private String taskDetails;

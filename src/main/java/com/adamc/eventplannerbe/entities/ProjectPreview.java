@@ -1,14 +1,14 @@
 package com.adamc.eventplannerbe.entities;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
 @Data
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProjectPreview {
     private Long id;
     private String name;

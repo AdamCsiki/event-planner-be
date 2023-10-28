@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,8 +23,6 @@ import java.util.Optional;
 public class ProjectController {
     private final ProjectService projectService;
     private final UserService userService;
-    private final BoardService boardService;
-    private final TaskService taskService;
 
     /**
      * GET REQUESTS
@@ -40,7 +39,7 @@ public class ProjectController {
         return ResponseEntity.ok(projects);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectByName(@PathVariable Long id, Principal principal) {
         User user = userService.getUserByEmail(principal.getName()).orElseThrow();
 
@@ -52,25 +51,34 @@ public class ProjectController {
     /**
      * PUT REQUESTS
      */
-    @PutMapping("/add_board")
-    public Project addBoard(@RequestBody AddBoardRequest addBoardRequest) {
-        Project project = projectService.getOneById(addBoardRequest.getProjectId());
+    @PutMapping("/add")
+    public ResponseEntity<User> putProject(@RequestBody AddProjectRequest addProjectRequest, Principal principal) throws ParseException {
+        User user = userService.getUserByEmail(principal.getName()).orElseThrow();
+
+        Project newProject = new Project
+                .Builder()
+                .name(addProjectRequest.getName())
+                .deadLine(addProjectRequest.getDeadLine())
+                .build();
+
+        user.getProjects().add(newProject);
+
+        userService.putUser(user);
+
+        return ResponseEntity.ok(userService.getUserByEmail(principal.getName()).orElseThrow());
+    }
+
+    @PutMapping("/{id}/add_board")
+    public Project addBoard(@RequestBody AddBoardRequest addBoardRequest, @PathVariable Long id) {
+        Project project = projectService.getOneById(id);
 
         projectService.addNewBoard(project, addBoardRequest.getBoardName());
         projectService.putProject(project);
 
-        return projectService.getOneById(addBoardRequest.getProjectId());
+        return projectService.getOneById(id);
     }
 
-    @PutMapping("/add_task")
-    public Project addTask(@RequestBody AddTaskRequest addTaskRequest) {
-        Board board = boardService.getOneById(addTaskRequest.getBoardId());
 
-        boardService.addNewTask(board, addTaskRequest.getTaskName(), addTaskRequest.getTaskDetails());
-        boardService.putBoard(board);
-
-        return projectService.getOneById(addTaskRequest.getProjectId());
-    }
 
     @PutMapping("/edit_project")
     public Project editProject(@RequestBody EditProjectRequest editProjectRequest) {
@@ -80,26 +88,6 @@ public class ProjectController {
         projectService.putProject(project);
 
         return projectService.getOneById(editProjectRequest.getProjectId());
-    }
-
-    @PutMapping("/edit_board")
-    public Project editBoard(@RequestBody EditBoardRequest editBoardRequest) {
-        Board board = boardService.getOneById(editBoardRequest.getBoardId());
-
-        boardService.editBoard(board, editBoardRequest.getBoardName());
-        boardService.putBoard(board);
-
-        return projectService.getOneById(editBoardRequest.getProjectId());
-    }
-
-    @PutMapping("/edit_task")
-    public Project editTask(@RequestBody EditTaskRequest editTaskRequest) {
-        Task task = taskService.getOneById(editTaskRequest.getTaskId());
-
-        taskService.editTask(task, editTaskRequest.getTaskName(), editTaskRequest.getTaskDetails());
-        taskService.putTask(task);
-
-        return projectService.getOneById(editTaskRequest.getProjectId());
     }
 
     /**
@@ -120,5 +108,21 @@ public class ProjectController {
         } else {
             return "Failed";
         }
+    }
+
+    /**
+     * DELETE REQUESTS
+     */
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteProject(@PathVariable Long id, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName()).orElseThrow();
+
+        Project project = projectService.getOneById(id);
+
+        user.getProjects().remove(project);
+
+        userService.putUser(user);
+
+        return ResponseEntity.ok("Deleted " + id);
     }
 }

@@ -1,13 +1,14 @@
-package com.adamc.eventplannerbe.requests;
+package com.adamc.eventplannerbe.responses;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EditTaskRequest {
-    private String taskName;
-    private String taskDetails;
+public class OnlineResponse {
+    private boolean isOnline;
 }
